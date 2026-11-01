@@ -44,9 +44,6 @@ test passing, and the APK installed and opened on the user's phone.
 
 ## Known issues / follow-ups
 - **No app icon yet:** the launcher shows Android's default icon (Step 09 / Step 13).
-- **Default branch:** GitHub's default branch is still `ccr-cc71c66b-9j7p65`. `RULES_URL` assumes
-  `main` holds `rules/detection-rules.json`; switch the default to `main` (user action) before
-  Step 05 relies on fetching it.
 - **Agent environment can't build locally:** `dl.google.com` (Android SDK and Google Maven, incl.
   AGP/AndroidX) and `downloads.gradle.org` (Gradle distributions) are blocked; Maven Central
   answers HTTP 429. CI is the only build. The wrapper jar was generated with Gradle 8.14.3 (an
