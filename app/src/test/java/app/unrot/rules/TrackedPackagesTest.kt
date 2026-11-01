@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test
 class TrackedPackagesTest {
     @Test
     fun `bundled rules list exactly the six tracked packages`() {
-        val rulesFile = File(System.getProperty("unrot.rulesFile"))
+        // Set by app/build.gradle.kts.
+        val path = requireNotNull(System.getProperty("unrot.rulesFile"))
+        val rulesFile = File(path)
         val expected = setOf(
             "com.instagram.android",
             "com.google.android.youtube",
