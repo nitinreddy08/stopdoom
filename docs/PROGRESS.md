@@ -85,6 +85,13 @@ test passing, and the APK installed and opened on the user's phone.
   generated debug key, so Android refuses to install it over the previous build. Uninstalling
   also clears the app's data. Consider a stable debug signing key before Step 04's repeated
   device tests (decide with the user; signing keys must not be committed, SPEC §19.6).
+- **Play Protect blocks sideloaded installs (seen 2026-11-01, OnePlus 11R, Android 16):** "App
+  blocked to protect your device" with only an OK button, because the APK declares an
+  accessibility service and was opened from a file manager. Workarounds for testing: pause Play
+  Protect scanning while installing, or `adb install`. Product impact: users installing from
+  GitHub Releases in regions with this protection will hit the same wall; the README and the
+  distribution plan (ADR-017: Google Play, F-Droid) must account for it. Never try to evade the
+  check in code.
 - **Heartbeat during deep sleep:** the 60 s heartbeat pauses while the CPU sleeps with the screen
   off; a gap in `lastAliveAt` alone does not mean the service died. Health checks (§14.1) must
   account for this.
@@ -105,3 +112,6 @@ test passing, and the APK installed and opened on the user's phone.
 - **2026-11-01, Step 00.** OnePlus 11R, Android 16. APK: `app-debug` from
   CI run #2. Passed: installed, opened, showed the "Today" placeholder (dark theme, edge-to-edge,
   status bar readable), no crash. Failed: nothing.
+- **2026-11-01, Step 01 (attempt 1).** OnePlus 11R, Android 16. APK: `app-debug` from CI run #12.
+  Blocked at install by Google Play Protect ("App blocked to protect your device"). Service not
+  tested yet.
