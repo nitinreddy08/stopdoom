@@ -3,12 +3,13 @@
 The agent updates this at the end of every session. Newest entries at the top.
 
 ## Current step
-Step 00: built, CI green; **waiting for the device gate** (install the APK, check that it opens).
+Step 01 (not started). Start it in a fresh session from the latest `main`.
 
 ## Completed steps
-(none yet; Step 00 completes when the device gate passes)
 
-### 2026-11-01: Step 00, project scaffold (built, awaiting device test)
+### 2026-11-01: Step 00, project scaffold (done)
+All "Done when" items passed: CI green with the `app-debug` artifact, `:detection` placeholder
+test passing, and the APK installed and opened on the user's phone.
 - Gradle project: `:app` (Compose; `UnrotApp`, empty `AppContainer`, `MainActivity`, placeholder
   "Today" screen, theme stub) and `:detection` (pure Kotlin/JVM, one placeholder JUnit 5 test).
 - Version catalog `gradle/libs.versions.toml`, Gradle 9.8.2 wrapper (distribution checksum pinned).
@@ -59,3 +60,7 @@ Step 00: built, CI green; **waiting for the device gate** (install the APK, chec
 
 ## Device test results
 (date, step, phone model, Android version, what passed, what failed)
+
+- **2026-11-01, Step 00.** Phone model and Android version: not reported. APK: `app-debug` from
+  CI run #2. Passed: installed, opened, showed the "Today" placeholder (dark theme, edge-to-edge,
+  status bar readable), no crash. Failed: nothing.
