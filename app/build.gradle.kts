@@ -26,6 +26,17 @@ android {
         buildConfigField("String", "RULES_URL", "\"$rulesUrl\"")
     }
 
+    // Fixed debug-only key, committed on purpose (user's choice, 2026-11-01): every CI build then
+    // installs as an update instead of needing an uninstall. Release signing comes in Step 13.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

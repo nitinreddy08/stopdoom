@@ -21,6 +21,7 @@ class ForegroundTracker(
 ) {
     private var current: ForegroundState? = null
     private var contentEventsEnabled = false
+    private var lastFocus: String? = null
 
     /** Re-reads the window list. Called after window events (conflated). */
     fun refresh() {
@@ -30,13 +31,20 @@ class ForegroundTracker(
         } finally {
             windows.forEach { it.recycleBelowApi33() }
         }
-        val next = ForegroundResolver.resolve(snapshots, clock()) ?: return
-        if (!ForegroundResolver.isChange(current, next)) return
-        current = next
-        status.foreground.value = next
-        val message = "foreground ${next.packageName} ${next.appWindowBounds}"
-        log.i(TAG, "$message visible=${next.visiblePackages}")
-        setContentEvents(next.packageName in trackedPackages)
+        val focused = snapshots.firstOrNull { it.isFocused }
+        val focus = focused?.let { "${it.kind} ${it.packageName ?: "?"}" } ?: "none"
+        val next = ForegroundResolver.resolve(snapshots, clock())
+        if (next != null && ForegroundResolver.isChange(current, next)) {
+            current = next
+            status.foreground.value = next
+            val message = "foreground ${next.packageName} ${next.appWindowBounds}"
+            log.i(TAG, "$message visible=${next.visiblePackages}")
+            setContentEvents(next.packageName in trackedPackages)
+        } else if (focus != lastFocus && focused?.packageName != current?.packageName) {
+            // A non-app window (shade, Shelf, keyboard...) has focus: log what was ignored.
+            log.d(TAG, "kept ${current?.packageName ?: "none"}; focus on $focus")
+        }
+        lastFocus = focus
     }
 
     private fun setContentEvents(enabled: Boolean) {
@@ -53,9 +61,11 @@ class ForegroundTracker(
         val rect = Rect()
         getBoundsInScreen(rect)
         val kind = kindOf(type)
+        // App windows always; other windows only when focused, so the log can name them.
+        val readPackage = kind == WindowKind.APPLICATION || isFocused
         return WindowSnapshot(
             kind = kind,
-            packageName = if (kind == WindowKind.APPLICATION) rootPackageName() else null,
+            packageName = if (readPackage) rootPackageName() else null,
             bounds = Bounds(rect.left, rect.top, rect.right, rect.bottom),
             isFocused = isFocused,
             isActive = isActive,

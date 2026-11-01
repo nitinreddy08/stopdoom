@@ -97,7 +97,27 @@ class ForegroundResolverTest {
         assertTrue(ForegroundResolver.isChange(start, start.copy(packageName = YOUTUBE)))
     }
 
+    @Test
+    fun `Shelf opened over Instagram keeps Instagram in front`() {
+        // OxygenOS 16: a swipe down inside Instagram opens the Shelf as an application window.
+        val shelf = app(SHELF, focused = true, active = true)
+        val state = resolve(shelf, app(INSTAGRAM, active = true))
+        assertEquals(INSTAGRAM, state?.packageName)
+        assertEquals(listOf(INSTAGRAM), state?.visiblePackages)
+        // Instagram neither focused nor active: no result, so the tracker keeps Instagram.
+        assertNull(resolve(shelf, app(INSTAGRAM)))
+    }
+
+    @Test
+    fun `system UI shown as an application window never becomes the foreground`() {
+        assertNull(resolve(app(SYSTEM_UI, focused = true, active = true)))
+        val state = resolve(app(SYSTEM_UI, focused = true), app(YOUTUBE, active = true))
+        assertEquals(YOUTUBE, state?.packageName)
+    }
+
     private companion object {
+        const val SHELF = "com.coloros.assistantscreen"
+        const val SYSTEM_UI = "com.android.systemui"
         const val INSTAGRAM = "com.instagram.android"
         const val YOUTUBE = "com.google.android.youtube"
         const val TIKTOK = "com.zhiliaoapp.musically"

@@ -34,15 +34,23 @@ data class ForegroundState(
 
 object ForegroundResolver {
     /**
+     * Packages whose windows never count as the app in front, even when Android reports them as
+     * application windows: system and phone-maker panels that open over apps. While one is open,
+     * the previous app stays in front (SPEC §7.3 step 3).
+     * - `com.android.systemui`: notification shade, quick settings, volume and similar panels.
+     * - `com.coloros.assistantscreen`: the OnePlus/OPPO/realme Shelf. On OxygenOS 16 a swipe down
+     *   from the top inside an app can open it (seen on a OnePlus 11R, 2026-11-01).
+     */
+    val NEVER_FOREGROUND: Set<String> = setOf("com.android.systemui", "com.coloros.assistantscreen")
+
+    /**
      * Picks the foreground app from the current windows (SPEC §7.3 steps 2–3): the focused
      * application window, else the active one. Keyboard, system UI (notification shade, volume),
-     * accessibility overlays and the split-screen divider are ignored. A picture-in-picture window
-     * never counts. Returns null when no application window qualifies.
+     * accessibility overlays, the split-screen divider and [NEVER_FOREGROUND] panels are ignored.
+     * A picture-in-picture window never counts. Returns null when no application window qualifies.
      */
     fun resolve(windows: List<WindowSnapshot>, nowMs: Long): ForegroundState? {
-        val apps = windows.filter {
-            it.kind == WindowKind.APPLICATION && it.packageName != null && !it.isPictureInPicture
-        }
+        val apps = windows.filter { it.isAppCandidate() }
         val chosen = apps.firstOrNull { it.isFocused }
             ?: apps.firstOrNull { it.isActive }
             ?: return null
@@ -56,5 +64,10 @@ object ForegroundResolver {
         if (previous == null) return true
         val samePackage = previous.packageName == next.packageName
         return !samePackage || previous.appWindowBounds != next.appWindowBounds
+    }
+
+    private fun WindowSnapshot.isAppCandidate(): Boolean {
+        val pkg = packageName ?: return false
+        return kind == WindowKind.APPLICATION && pkg !in NEVER_FOREGROUND && !isPictureInPicture
     }
 }

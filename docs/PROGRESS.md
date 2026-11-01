@@ -75,16 +75,28 @@ test passing, and the APK installed and opened on the user's phone.
   Loading rules into the detector and `DetectorState.initial()` (§7.1 steps 1, 4) wait for Step 03.
 - **Step 01, error logging:** caught exceptions log the class name and top stack frame; the
   message only in debug builds (ADR-019, release logs stay structural).
+- **Step 01, panels that are never the foreground app (refines SPEC §7.3 step 3):**
+  `ForegroundResolver.NEVER_FOREGROUND` = `com.android.systemui` and `com.coloros.assistantscreen`
+  (OnePlus/OPPO/realme Shelf). Their windows are ignored even when Android reports them as
+  application windows; the previous app stays in front. Reason: on the user's OnePlus 11R
+  (OxygenOS 16), a swipe down from the top inside Instagram opened the Shelf and Unrot reported
+  "left Instagram". More phone-maker panels get added here as device tests find them (a candidate
+  for the rules file in Step 05). The diagnostic log now says what it ignored
+  (`kept <app>; focus on <TYPE> <package>`).
+- **Step 01, fixed debug signing key (user's choice "a", 2026-11-01):** `app/debug.keystore`
+  (standard debug alias/passwords) is committed on purpose and `.gitignore` makes an exception for
+  it, so each CI build installs as an update. Debug builds only; release signing is Step 13 and
+  must never be committed.
 - **Step 01, new dependency versions:** core-ktx 1.19.1, lifecycle-runtime-compose 2.11.0,
   DataStore 1.3.0, kotlinx-coroutines 1.11.0, kotlinx-serialization-json 1.12.0. `:app` unit tests
   use JUnit 5 like `:detection`.
 
 ## Known issues / follow-ups
 - **No app icon yet:** the launcher shows Android's default icon (Step 09 / Step 13).
-- **Updating a CI debug build needs an uninstall first:** each CI run signs the APK with a freshly
-  generated debug key, so Android refuses to install it over the previous build. Uninstalling
-  also clears the app's data. Consider a stable debug signing key before Step 04's repeated
-  device tests (decide with the user; signing keys must not be committed, SPEC §19.6).
+- **Window bounds flicker during gestures:** app-open, back and app-switch animations report a
+  moved window for a moment (e.g. `[0,70][1240,2842]`, `[-371,0][868,2772]`, `[1240,0][2480,2772]`)
+  before it settles at full screen. Harmless now; the counting steps (03/04) must ignore these
+  transient bounds rather than treat them as a new surface size.
 - **Play Protect blocks sideloaded installs (seen 2026-11-01, OnePlus 11R, Android 16):** "App
   blocked to protect your device" with only an OK button, because the APK declares an
   accessibility service and was opened from a file manager. Workarounds for testing: pause Play
@@ -113,5 +125,12 @@ test passing, and the APK installed and opened on the user's phone.
   CI run #2. Passed: installed, opened, showed the "Today" placeholder (dark theme, edge-to-edge,
   status bar readable), no crash. Failed: nothing.
 - **2026-11-01, Step 01 (attempt 1).** OnePlus 11R, Android 16. APK: `app-debug` from CI run #12.
-  Blocked at install by Google Play Protect ("App blocked to protect your device"). Service not
-  tested yet.
+  Blocked at install by Google Play Protect ("App blocked to protect your device"). Installed after
+  pausing Play Protect scanning; the accessibility toggle then needed "Allow restricted settings".
+  Passed: service connected (no restart from 17:20 to 17:48+), heartbeat every 60 s, foreground
+  changes for Instagram, Snapchat, Chrome, Brave, Claude, launcher (`com.android.launcher`);
+  content-changed events on/off when entering/leaving Instagram and Snapchat; no
+  `com.android.systemui` line ever appeared. Failed: swiping down from the top inside Instagram
+  opened the OnePlus Shelf (`com.coloros.assistantscreen`), which Unrot reported as the new
+  foreground app (fixed in the next build, see Decisions). Keyboard, split screen and 5-minute
+  lock: pending.
