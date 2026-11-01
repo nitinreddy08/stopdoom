@@ -51,7 +51,7 @@ kotlin {
 }
 
 // SPEC §19.1: ship the repo's rules file inside the APK. The copied file is git-ignored.
-val copyRules by tasks.registering(Copy::class) {
+val copyRules = tasks.register<Copy>("copyRules") {
     description = "Copies rules/detection-rules.json into the app's assets."
     from(rootProject.layout.projectDirectory.file("rules/detection-rules.json"))
     into(layout.projectDirectory.dir("src/main/assets"))
