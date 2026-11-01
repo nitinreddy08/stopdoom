@@ -3,7 +3,28 @@
 The agent updates this at the end of every session. Newest entries at the top.
 
 ## Current step
-Step 02 (not started). Test phone: OnePlus 11R, Android 16.
+Step 02 (built, CI pending; waiting for the user's recordings). Test phone: OnePlus 11R,
+Android 16. Installed apps among the tracked ones: Instagram and Snapchat only.
+
+### 2026-11-01: Step 02, Inspector (in progress)
+Built (commit 5c78c3f):
+- `:detection`: `Signal` shapes (§7.4; `RulesChanged` waits for the rules model in Step 03),
+  `TraceEvent` + `TraceFormat` (JSON Lines exactly as §15.3, plus the `.expected.json` sidecar),
+  `RecordedTracesTest` (every committed trace parses and has a sidecar).
+- Service: `SignalMapper` (§7.2), `NodeInspector` (§7.8 settle snapshot, 30 ms budget,
+  `SNAPSHOT_SLOW` logged), `CenterSignature` (§7.4 hash; text in memory only), `TraceCapture`
+  (detector thread; settle 300 ms after the last scroll per container).
+- `TraceRecorder` (§15.2: start/stop, 5 min / 20 000 line auto-stop, list, delete, zip; the
+  sidecar's `app` and `appVersionCode` come from the most-scrolled tracked package at stop).
+- Inspector screen, minimal disclosure screen (§13.3), enable flow with highlight extras (§13.4),
+  restricted-settings help card (§13.5). `docs/TESTING_ON_DEVICE.md`.
+- Tests: 12 trace-format tests in `:detection`; 25 new JVM tests in `:app` (recorder, names, rate
+  limiter, signature, SignalMapper, trace privacy, app ids).
+
+Done when:
+- [ ] CI green.
+- [ ] 🔶 User records and shares the traces (Instagram 1–5, plus Snapchat Spotlight).
+- [ ] Traces committed to `detection/src/test/resources/traces/`.
 
 ## Completed steps
 
@@ -71,8 +92,8 @@ test passing, and the APK installed and opened on the user's phone.
   `BuildConfig.DEBUG`; release builds show the Today placeholder. It moves to Settings > Advanced
   in Step 11.
 - **Step 01, no "open accessibility settings" button yet:** ADR-019 requires the full disclosure
-  screen before any redirect to accessibility settings; that screen is Step 11. Until then the
-  service is enabled manually in Settings.
+  screen before any redirect to accessibility settings. *Superseded in Step 02:* the step file
+  asks for a minimal disclosure screen and enable flow now; the polished version is Step 11.
 - **Step 01, tracked packages:** read from the bundled rules asset (package names only, via
   `kotlinx-serialization-json` `JsonElement`); the full `RulesRepository` replaces this in Step 05.
   Loading rules into the detector and `DetectorState.initial()` (§7.1 steps 1, 4) wait for Step 03.
@@ -96,6 +117,29 @@ test passing, and the APK installed and opened on the user's phone.
   DataStore 1.3.0, kotlinx-coroutines 1.11.0, kotlinx-serialization-json 1.12.0. `:app` unit tests
   use JUnit 5 like `:detection`.
 
+- **Step 02, trace lines beyond the §15.3 examples:** `WINDOW` (`t,e,pkg,cls`: a window-state
+  event from a tracked app, e.g. a comments sheet opening), `CONTENT_CHANGED` (`t,e,pkg,cls,ct`;
+  `ct` = Android's content-change-types bits; sampled to at most 5/s) and `SCREEN_ON`. Missing
+  values are written as JSON `null`, never omitted. Unknown fields are ignored when reading.
+- **Step 02, privacy in traces:** a `FOREGROUND` line names the package only for tracked apps;
+  any other app is written as `"pkg":null`, so a shared trace never shows which other apps were
+  used. `SNAPSHOT.sig` is the 16-hex hash only; the text it hashes never leaves
+  `CenterSignature`/`NodeInspector`.
+- **Step 02, settle snapshots while recording:** taken 300 ms after the last scroll of each
+  container (the rules' default `settleMs`); at most 4 containers wait at once. The signature is
+  always computed while recording (every rule is `AUTO`, still undecided). The §7.8 "full item"
+  mark is not stored: it follows from the child bounds and is the detector's job (Step 03).
+  Snapshots are skipped entirely when not recording (no detector yet).
+- **Step 02, Inspector access:** a button on the home screen in all builds until Settings exists
+  (Step 11, §15.1). Extras beyond §15.2: tap-to-fill presets for the device tests, "Share all as
+  one zip" and "Save all to Downloads" (MediaStore, no permission), so the user can send every
+  recording in one file. The red "REC" dot needs the live pill (Step 04); until then the
+  Inspector screen shows the recording state.
+- **Step 02, `:detection` dependencies:** `kotlinx-serialization-json` (JsonElement API only,
+  no compiler plugin) for the trace format. `:app` depends on `:detection`.
+- **Step 02, extra trace:** Snapchat Spotlight, 10 swipes (expected 11), because the user has
+  Snapchat but not YouTube, TikTok or Facebook.
+
 ## Known issues / follow-ups
 - **No app icon yet:** the launcher shows Android's default icon (Step 09 / Step 13).
 - **Window bounds flicker during gestures:** app-open, back and app-switch animations report a
@@ -115,9 +159,11 @@ test passing, and the APK installed and opened on the user's phone.
 - **Heartbeat during deep sleep:** the 60 s heartbeat pauses while the CPU sleeps with the screen
   off; a gap in `lastAliveAt` alone does not mean the service died. Health checks (§14.1) must
   account for this.
-- **Agent environment can't build locally:** `dl.google.com` (Android SDK and Google Maven, incl.
-  AGP/AndroidX) and `downloads.gradle.org` (Gradle distributions) are blocked; Maven Central
-  answers HTTP 429. CI is the only build. The wrapper jar was generated with Gradle 8.14.3 (an
+- **Agent environment can't build the app locally:** `dl.google.com` (Android SDK and Google
+  Maven, incl. AGP/AndroidX) and `downloads.gradle.org` (Gradle distributions) are blocked. Since
+  Step 02, Maven Central answers (with occasional 429s, retried), so the agent runs ktlint and
+  the pure-JVM code and tests (`:detection`, recorder, signature...) in a scratch build with the
+  local Gradle 8.14.3. Android code is still checked by CI only. The wrapper jar was generated with Gradle 8.14.3 (an
   official jar; CI's wrapper validation passes); refresh it with `./gradlew wrapper` when a
   machine can.
 - **CI caching provider:** `gradle/actions/setup-gradle@v6` uses its proprietary "Enhanced
