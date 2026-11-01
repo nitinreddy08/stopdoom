@@ -98,14 +98,14 @@ class ForegroundResolverTest {
     }
 
     @Test
-    fun `Shelf opened over Instagram keeps Instagram in front`() {
-        // OxygenOS 16: a swipe down inside Instagram opens the Shelf as an application window.
+    fun `Shelf over the home screen never becomes the foreground`() {
+        // OxygenOS 16 reports the Shelf (swipe down on the home screen) as an application window.
         val shelf = app(SHELF, focused = true, active = true)
-        val state = resolve(shelf, app(INSTAGRAM, active = true))
-        assertEquals(INSTAGRAM, state?.packageName)
-        assertEquals(listOf(INSTAGRAM), state?.visiblePackages)
-        // Instagram neither focused nor active: no result, so the tracker keeps Instagram.
-        assertNull(resolve(shelf, app(INSTAGRAM)))
+        val state = resolve(shelf, app(LAUNCHER, active = true))
+        assertEquals(LAUNCHER, state?.packageName)
+        assertEquals(listOf(LAUNCHER), state?.visiblePackages)
+        // Launcher neither focused nor active: no result, so the tracker keeps the previous app.
+        assertNull(resolve(shelf, app(LAUNCHER)))
     }
 
     @Test

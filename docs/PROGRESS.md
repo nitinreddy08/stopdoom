@@ -79,9 +79,11 @@ test passing, and the APK installed and opened on the user's phone.
   `ForegroundResolver.NEVER_FOREGROUND` = `com.android.systemui` and `com.coloros.assistantscreen`
   (OnePlus/OPPO/realme Shelf). Their windows are ignored even when Android reports them as
   application windows; the previous app stays in front. Reason: on the user's OnePlus 11R
-  (OxygenOS 16), a swipe down from the top inside Instagram opened the Shelf and Unrot reported
-  "left Instagram". More phone-maker panels get added here as device tests find them (a candidate
-  for the rules file in Step 05). The diagnostic log now says what it ignored
+  (OxygenOS 16) the Shelf, a panel opened by swiping down on the home screen, is reported as an
+  application window and showed up as a foreground "app". (It cannot open over other apps; an
+  earlier log line that went straight from Instagram to the Shelf was the home screen passing too
+  quickly to register.) More phone-maker panels get added here as device tests find them (a
+  candidate for the rules file in Step 05). The diagnostic log now says what it ignored
   (`kept <app>; focus on <TYPE> <package>`).
 - **Step 01, fixed debug signing key (user's choice "a", 2026-11-01):** `app/debug.keystore`
   (standard debug alias/passwords) is committed on purpose and `.gitignore` makes an exception for
@@ -130,7 +132,10 @@ test passing, and the APK installed and opened on the user's phone.
   Passed: service connected (no restart from 17:20 to 17:48+), heartbeat every 60 s, foreground
   changes for Instagram, Snapchat, Chrome, Brave, Claude, launcher (`com.android.launcher`);
   content-changed events on/off when entering/leaving Instagram and Snapchat; no
-  `com.android.systemui` line ever appeared. Failed: swiping down from the top inside Instagram
-  opened the OnePlus Shelf (`com.coloros.assistantscreen`), which Unrot reported as the new
-  foreground app (fixed in the next build, see Decisions). Keyboard, split screen and 5-minute
-  lock: pending.
+  `com.android.systemui` line ever appeared. Issue: the OnePlus Shelf (`com.coloros.assistantscreen`,
+  home screen only) was reported as a foreground app.
+- **2026-11-01, Step 01 (attempt 2).** OnePlus 11R, Android 16. APK: CI run #16 (fixed debug key,
+  panel fix). Passed: Shelf opened from the home screen is ignored (`kept com.android.launcher;
+  focus on APPLICATION com.coloros.assistantscreen`); the screenshot tool is ignored too (`focus
+  on OTHER com.oplus.screenshot`); Instagram on/off still correct. Shade inside an app, keyboard,
+  split screen and 5-minute lock: pending.

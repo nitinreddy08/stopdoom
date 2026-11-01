@@ -38,8 +38,8 @@ object ForegroundResolver {
      * application windows: system and phone-maker panels that open over apps. While one is open,
      * the previous app stays in front (SPEC §7.3 step 3).
      * - `com.android.systemui`: notification shade, quick settings, volume and similar panels.
-     * - `com.coloros.assistantscreen`: the OnePlus/OPPO/realme Shelf. On OxygenOS 16 a swipe down
-     *   from the top inside an app can open it (seen on a OnePlus 11R, 2026-11-01).
+     * - `com.coloros.assistantscreen`: the OnePlus/OPPO/realme Shelf, a panel opened by swiping
+     *   down on the home screen (seen on a OnePlus 11R, OxygenOS 16, 2026-11-01).
      */
     val NEVER_FOREGROUND: Set<String> = setOf("com.android.systemui", "com.coloros.assistantscreen")
 
