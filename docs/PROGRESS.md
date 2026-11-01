@@ -3,12 +3,15 @@
 The agent updates this at the end of every session. Newest entries at the top.
 
 ## Current step
-Step 01: built, CI green; **waiting for the device gate** (phone test script in the Step 01
-hand-off). Test phone: OnePlus 11R, Android 16.
+Step 02 (not started). Test phone: OnePlus 11R, Android 16.
 
 ## Completed steps
 
-### 2026-11-01: Step 01, accessibility service skeleton (built, awaiting device test)
+### 2026-11-01: Step 01, accessibility service skeleton (done)
+Closed by the user after the device tests below ("enough testing"). CI green (run #20). Not
+verified on the phone, to re-check during Step 02/04 device tests: focus switching between the
+two split-screen halves, one continuous 5-minute lock, and installing a new build as an update
+with the fixed debug key.
 - Manifest: SPEC §6.1 permissions, `<queries>` for the six tracked packages, service declaration
   (§6.3) and `accessibility_service_config.xml` exactly as §6.4. Placeholder disclosure strings.
 - `UnrotAccessibilityService`: §7.1 lifecycle; every entry point in try/catch; one detector thread
