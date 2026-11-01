@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window theme only; the real look is Compose (ui/theme). Colors/fonts arrive in Step 09. -->
+    <style name="Theme.Unrot" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
