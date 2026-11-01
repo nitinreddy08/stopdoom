@@ -26,6 +26,17 @@ android {
         buildConfigField("String", "RULES_URL", "\"$rulesUrl\"")
     }
 
+    // Fixed debug-only key, committed on purpose (user's choice, 2026-11-01): every CI build then
+    // installs as an update instead of needing an uninstall. Release signing comes in Step 13.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -61,9 +72,29 @@ tasks.named("preBuild") {
     dependsOn(copyRules)
 }
 
+// JVM unit tests (src/test) run on JUnit 5, like :detection.
+val rulesFileForTests = rootProject.file("rules/detection-rules.json")
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+    inputs.file(rulesFileForTests)
+    systemProperty("unrot.rulesFile", rulesFileForTests.absolutePath)
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
+
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization.json)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }

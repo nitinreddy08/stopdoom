@@ -3,4 +3,26 @@
     <string name="app_name">Unrot</string>
     <string name="today_title">Today</string>
     <string name="today_placeholder">Reel counting arrives in a later version.</string>
+
+    <!-- Accessibility service. Placeholder disclosure copy; the final wording comes in Step 11
+         (SPEC §13.3). It must keep saying what is read and that screen content is never stored. -->
+    <string name="accessibility_service_label">Unrot</string>
+    <string name="accessibility_service_summary">Counts the reels and shorts you scroll</string>
+    <string name="accessibility_service_description">Unrot uses this to see which app is open and, inside Instagram, YouTube, TikTok, Facebook and Snapchat, to count the reels and shorts you scroll. It never stores or sends what is on your screen: no text, captions, usernames or images.</string>
+
+    <!-- Debug panel (debug builds only; moves to Settings > Advanced in Step 11). -->
+    <string name="debug_title">Unrot debug</string>
+    <string name="debug_service">Accessibility service</string>
+    <string name="debug_connected">Connected</string>
+    <string name="debug_not_connected">Not connected. Turn on Unrot in Settings &gt; Accessibility.</string>
+    <string name="debug_connected_since">Connected since</string>
+    <string name="debug_last_heartbeat">Last heartbeat</string>
+    <string name="debug_foreground">Foreground app</string>
+    <string name="debug_visible_apps">Visible apps</string>
+    <string name="debug_window_bounds">App window bounds</string>
+    <string name="debug_content_events">Content-changed events</string>
+    <string name="debug_on">On</string>
+    <string name="debug_off">Off</string>
+    <string name="debug_none">None</string>
+    <string name="debug_log_title">Last %1$d log lines (newest first)</string>
 </resources>
