@@ -25,4 +25,63 @@
     <string name="debug_off">Off</string>
     <string name="debug_none">None</string>
     <string name="debug_log_title">Last %1$d log lines (newest first)</string>
+
+    <!-- Turning the service on (SPEC §13.2–13.5). Minimal version; polished in Step 11. -->
+    <string name="setup_off_title">Unrot is off</string>
+    <string name="setup_off_body">Turn on Unrot\'s accessibility service so it can see the reels and shorts you scroll.</string>
+    <string name="setup_not_running_title">Unrot is on but not running</string>
+    <string name="setup_not_running_body">Android stopped it. Tap below, then in Accessibility settings turn Unrot off and on again.</string>
+    <string name="setup_turn_on">Turn on Unrot</string>
+
+    <!-- SPEC §13.3: must keep this meaning; the final copy can be polished. -->
+    <string name="disclosure_title">Unrot uses Android\'s Accessibility service.</string>
+    <string name="disclosure_purpose">It\'s needed to see when you scroll reels and shorts in Instagram, YouTube, TikTok, Facebook and Snapchat, to show your live count, and to cover reels when you reach your limit.</string>
+    <string name="disclosure_reading">To tell reels apart, Unrot reads screen structure (like the size of the scrolling area) and, for some apps, briefly reads on-screen text in memory. It never saves, logs, or sends any screen content. Only your reel counts and times are stored, on your phone.</string>
+    <string name="disclosure_battles">If you join Friend Battles, only your daily count and failed challenges are shared with friends you add.</string>
+    <string name="disclosure_turn_off">You can turn this off anytime in Android settings.</string>
+    <string name="disclosure_privacy">Read the privacy policy</string>
+    <string name="disclosure_next_steps">Next, Android opens Accessibility settings. Find Unrot (on some phones under Installed apps or Downloaded apps) and switch it on.</string>
+    <string name="disclosure_agree">Agree and continue</string>
+    <string name="disclosure_not_now">Not now</string>
+
+    <!-- SPEC §13.5: restricted settings for sideloaded installs, Android 13+. -->
+    <string name="restricted_title">Is the switch greyed out?</string>
+    <string name="restricted_body">If the switch is greyed out: open App info → ⋮ menu → Allow restricted settings, then try again.</string>
+    <string name="restricted_step_1">Tap Open App info below.</string>
+    <string name="restricted_step_2">Tap the ⋮ menu at the top right, then Allow restricted settings, and confirm with your PIN or fingerprint if asked. Some phones name this menu differently.</string>
+    <string name="restricted_step_3">Come back here, tap Turn on Unrot again and switch Unrot on.</string>
+    <string name="restricted_open_app_info">Open App info</string>
+
+    <!-- Inspector (SPEC §15). Moves to Settings > Advanced in Step 11. -->
+    <string name="inspector_open">Inspector (record traces)</string>
+    <string name="inspector_title">Inspector</string>
+    <string name="inspector_back">Back</string>
+    <string name="inspector_warning">Recording saves screen structure from Instagram, YouTube, TikTok, Facebook and Snapchat: class names, view ids, sizes and positions of scrolling lists, and a scrambled fingerprint of the reel in the middle. It never saves text, captions, usernames or images. Recordings stay on your phone until you share them.</string>
+    <string name="inspector_service_needed">Turn on Unrot first. Recording needs the accessibility service.</string>
+    <string name="inspector_presets">Tap a test to fill in the form:</string>
+    <string name="inspector_label">Label</string>
+    <string name="inspector_expected">Expected reels</string>
+    <string name="inspector_start">Start recording</string>
+    <string name="inspector_stop">Stop recording</string>
+    <string name="inspector_recording">Recording: %1$s</string>
+    <string name="inspector_recording_details">Expected %1$d · %2$d lines · %3$s</string>
+    <string name="inspector_recording_hint">Now open the app and do exactly what the label says. Then come back here and tap Stop recording.</string>
+    <string name="inspector_stopped_time">The last recording stopped by itself after 5 minutes.</string>
+    <string name="inspector_stopped_lines">The last recording stopped by itself after 20,000 lines.</string>
+    <string name="inspector_stopped_error">The last recording stopped because its file could not be written.</string>
+    <string name="inspector_saved_title">Recordings</string>
+    <string name="inspector_none">No recordings yet.</string>
+    <string name="inspector_saved_details">%1$s · expected %2$s · %3$s · %4$s</string>
+    <string name="inspector_unknown">?</string>
+    <string name="inspector_share">Share</string>
+    <string name="inspector_delete">Delete</string>
+    <string name="inspector_share_all">Share all as one zip</string>
+    <string name="inspector_save_all">Save all to Downloads</string>
+    <string name="inspector_saved_to">Saved to Downloads: %1$s</string>
+    <string name="inspector_save_failed">Could not save to Downloads.</string>
+    <string name="inspector_delete_title">Delete this recording?</string>
+    <string name="inspector_cancel">Cancel</string>
+    <string name="inspector_share_subject">Unrot trace: %1$s</string>
+    <string name="inspector_share_all_subject">Unrot traces</string>
+    <string name="inspector_share_chooser">Share recordings</string>
 </resources>

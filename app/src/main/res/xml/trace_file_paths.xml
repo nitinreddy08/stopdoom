@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider paths for sharing Inspector recordings (TraceSharing). -->
+<paths>
+    <files-path name="traces" path="traces/" />
+    <cache-path name="shared" path="shared/" />
+</paths>

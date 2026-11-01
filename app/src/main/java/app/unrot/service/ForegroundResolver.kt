@@ -1,5 +1,8 @@
 package app.unrot.service
 
+import app.unrot.detection.Box
+import app.unrot.detection.trace.TraceEvent
+
 /** Window types the tracker cares about (mapped from `AccessibilityWindowInfo.type`). */
 enum class WindowKind {
     APPLICATION,
@@ -11,6 +14,8 @@ enum class WindowKind {
 }
 
 data class Bounds(val left: Int, val top: Int, val right: Int, val bottom: Int) {
+    fun toBox(): Box = Box(left, top, right, bottom)
+
     override fun toString(): String = "[$left,$top][$right,$bottom]"
 }
 
@@ -30,7 +35,16 @@ data class ForegroundState(
     val appWindowBounds: Bounds,
     val visiblePackages: List<String>,
     val atMs: Long,
-)
+) {
+    /**
+     * As an Inspector trace line. Apps that are not tracked are written as null, so a shared
+     * trace never reveals which other apps were used.
+     */
+    fun toTraceEvent(trackedPackages: Set<String>): TraceEvent.Foreground {
+        val pkg = packageName.takeIf { it in trackedPackages }
+        return TraceEvent.Foreground(atMs, pkg, appWindowBounds.toBox())
+    }
+}
 
 object ForegroundResolver {
     /**

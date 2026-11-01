@@ -8,6 +8,8 @@ import app.unrot.health.DiagnosticLog
 import app.unrot.health.HealthStore
 import app.unrot.health.LogEntry
 import app.unrot.health.LogLevel
+import app.unrot.inspector.AndroidTraceMetadata
+import app.unrot.inspector.TraceRecorder
 import app.unrot.rules.TrackedPackages
 import app.unrot.service.ServiceStatus
 import java.io.File
@@ -42,14 +44,26 @@ class AppContainer(private val appContext: Context) {
         )
     }
 
-    /** Package names from the bundled rules file; empty (and logged) if it can't be read. */
-    val trackedPackages: Set<String> by lazy {
+    /** Package → app id from the bundled rules file; empty (and logged) if it can't be read. */
+    val trackedApps: Map<String, String> by lazy {
         try {
-            TrackedPackages.fromAssets(appContext)
+            TrackedPackages.appsFromAssets(appContext)
         } catch (t: Throwable) {
             log.e(TAG, "could not read bundled rules: ${t.javaClass.name}")
-            emptySet()
+            emptyMap()
         }
+    }
+
+    val trackedPackages: Set<String> by lazy { trackedApps.keys }
+
+    /** Inspector recordings (SPEC §15), in `files/traces/`. */
+    val traceRecorder: TraceRecorder by lazy {
+        TraceRecorder(
+            directory = File(appContext.filesDir, TRACES_DIR),
+            metadata = AndroidTraceMetadata(appContext, trackedApps),
+            scope = appScope,
+            onError = { log.e("Inspector", it) },
+        )
     }
 
     val status = ServiceStatus()
@@ -68,5 +82,6 @@ class AppContainer(private val appContext: Context) {
         const val TAG = "App"
         const val LOG_FILE = "diagnostic-log.tsv"
         const val HEALTH_STORE = "health"
+        const val TRACES_DIR = "traces"
     }
 }

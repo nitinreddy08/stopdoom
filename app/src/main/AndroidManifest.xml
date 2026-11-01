@@ -39,6 +39,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Inspector recordings, shared only when the user taps Share (SPEC §15.2). -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.traces"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/trace_file_paths" />
+        </provider>
+
         <!-- SPEC §6.3 -->
         <service
             android:name=".service.UnrotAccessibilityService"

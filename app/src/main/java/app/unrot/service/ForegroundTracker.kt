@@ -2,15 +2,14 @@ package app.unrot.service
 
 import android.accessibilityservice.AccessibilityService
 import android.graphics.Rect
-import android.os.Build
-import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 import app.unrot.health.DiagnosticLog
 
 /**
  * Works out which app is in front from the window list (SPEC §7.3) and subscribes to
- * content-changed events only while a tracked app is in front (ADR-004).
- * Runs on the service's single detector thread (ADR-021).
+ * content-changed events only while a tracked app is in front (ADR-004). [onChange] hears every
+ * foreground change (the Inspector records them). Runs on the service's single detector thread
+ * (ADR-021).
  */
 class ForegroundTracker(
     private val service: AccessibilityService,
@@ -18,6 +17,7 @@ class ForegroundTracker(
     private val status: ServiceStatus,
     private val log: DiagnosticLog,
     private val clock: () -> Long,
+    private val onChange: (ForegroundState) -> Unit = {},
 ) {
     private var current: ForegroundState? = null
     private var contentEventsEnabled = false
@@ -43,6 +43,7 @@ class ForegroundTracker(
             val message = "foreground ${next.packageName} ${next.appWindowBounds}"
             log.i(TAG, "$message visible=${next.visiblePackages}")
             setContentEvents(next.packageName in trackedPackages)
+            onChange(next)
         } else if (ignoredFocus && focus != lastFocus) {
             log.d(TAG, "kept ${current?.packageName ?: "none"}; focus on $focus")
         }
@@ -95,17 +96,6 @@ class ForegroundTracker(
             AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY -> WindowKind.ACCESSIBILITY_OVERLAY
             AccessibilityWindowInfo.TYPE_SPLIT_SCREEN_DIVIDER -> WindowKind.SPLIT_SCREEN_DIVIDER
             else -> WindowKind.OTHER
-        }
-
-        // recycle() is required before API 33 and a deprecated no-op from API 33.
-        @Suppress("DEPRECATION")
-        fun AccessibilityWindowInfo.recycleBelowApi33() {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) recycle()
-        }
-
-        @Suppress("DEPRECATION")
-        fun AccessibilityNodeInfo.recycleBelowApi33() {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) recycle()
         }
     }
 }

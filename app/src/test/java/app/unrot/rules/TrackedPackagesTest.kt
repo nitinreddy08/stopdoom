@@ -23,6 +23,18 @@ class TrackedPackagesTest {
     }
 
     @Test
+    fun `each package maps to its app id`() {
+        val rulesFile = File(requireNotNull(System.getProperty("unrot.rulesFile")))
+        val apps = TrackedPackages.parseApps(rulesFile.readText())
+        assertEquals("instagram", apps["com.instagram.android"])
+        assertEquals("youtube", apps["com.google.android.youtube"])
+        assertEquals("tiktok", apps["com.zhiliaoapp.musically"])
+        assertEquals("tiktok", apps["com.ss.android.ugc.trill"])
+        assertEquals("facebook", apps["com.facebook.katana"])
+        assertEquals("snapchat", apps["com.snapchat.android"])
+    }
+
+    @Test
     fun `an invalid rules file throws`() {
         assertThrows(Exception::class.java) { TrackedPackages.parse("{}") }
         assertThrows(Exception::class.java) { TrackedPackages.parse("not json") }

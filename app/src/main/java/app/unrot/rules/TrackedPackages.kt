@@ -7,20 +7,27 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * Reads only the tracked package names from the bundled rules file (`rules/detection-rules.json`,
- * copied into assets by `copyRules`). The full rules repository and validator arrive in Step 05.
+ * Reads only the tracked apps from the bundled rules file (`rules/detection-rules.json`, copied
+ * into assets by `copyRules`). The full rules repository and validator arrive in Step 05.
  */
 object TrackedPackages {
     const val ASSET_NAME = "detection-rules.json"
 
-    /** Throws if [json] is not a valid rules file. */
-    fun parse(json: String): Set<String> {
+    /** Package name → the rules' app id (e.g. "instagram"). Throws if [json] is not valid. */
+    fun parseApps(json: String): Map<String, String> {
         val apps = Json.parseToJsonElement(json).jsonObject.getValue("apps").jsonArray
-        return apps.flatMap { app ->
-            app.jsonObject.getValue("packages").jsonArray.map { it.jsonPrimitive.content }
-        }.toSet()
+        return buildMap {
+            apps.forEach { app ->
+                val fields = app.jsonObject
+                val id = fields.getValue("id").jsonPrimitive.content
+                fields.getValue("packages").jsonArray.forEach { put(it.jsonPrimitive.content, id) }
+            }
+        }
     }
 
-    fun fromAssets(context: Context): Set<String> =
-        context.assets.open(ASSET_NAME).bufferedReader().use { parse(it.readText()) }
+    /** Throws if [json] is not a valid rules file. */
+    fun parse(json: String): Set<String> = parseApps(json).keys
+
+    fun appsFromAssets(context: Context): Map<String, String> =
+        context.assets.open(ASSET_NAME).bufferedReader().use { parseApps(it.readText()) }
 }

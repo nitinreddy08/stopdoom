@@ -3,6 +3,7 @@ package app.unrot.ui.debug
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -31,10 +32,15 @@ private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:m
 
 /**
  * Service status for testing on a phone. Shown only in debug builds (MainActivity checks
- * `BuildConfig.DEBUG`); it moves to Settings > Advanced in Step 11.
+ * `BuildConfig.DEBUG`); it moves to Settings > Advanced in Step 11. [header] goes under the title
+ * (setup card, Inspector button).
  */
 @Composable
-fun DebugScreen(container: AppContainer, modifier: Modifier = Modifier) {
+fun DebugScreen(
+    container: AppContainer,
+    modifier: Modifier = Modifier,
+    header: @Composable ColumnScope.() -> Unit = {},
+) {
     val connected by container.status.connected.collectAsStateWithLifecycle()
     val foreground by container.status.foreground.collectAsStateWithLifecycle()
     val contentEvents by container.status.contentEventsEnabled.collectAsStateWithLifecycle()
@@ -57,6 +63,7 @@ fun DebugScreen(container: AppContainer, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.semantics { heading() },
             )
+            header()
             val service = if (connected) R.string.debug_connected else R.string.debug_not_connected
             StatusRow(R.string.debug_service, stringResource(service))
             StatusRow(R.string.debug_connected_since, formatTime(connectedAt) ?: none)

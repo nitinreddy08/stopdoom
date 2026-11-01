@@ -1,5 +1,7 @@
 package app.unrot.service
 
+import app.unrot.detection.Box
+import app.unrot.detection.trace.TraceEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -122,6 +124,18 @@ class ForegroundResolverTest {
         val state = resolve(app(YOUTUBE, top), canvas, app(INSTAGRAM, bottom, focused = true))
         assertEquals(INSTAGRAM, state?.packageName)
         assertEquals(listOf(INSTAGRAM, YOUTUBE), state?.visiblePackages)
+    }
+
+    @Test
+    fun `trace lines name tracked apps only`() {
+        val tracked = setOf(INSTAGRAM)
+        val instagram = ForegroundState(INSTAGRAM, top, listOf(INSTAGRAM), 5L)
+        assertEquals(
+            TraceEvent.Foreground(5L, INSTAGRAM, Box(0, 0, 1080, 1180)),
+            instagram.toTraceEvent(tracked),
+        )
+        val launcher = ForegroundState(LAUNCHER, full, listOf(LAUNCHER), 6L)
+        assertEquals(TraceEvent.Foreground(6L, null, full.toBox()), launcher.toTraceEvent(tracked))
     }
 
     private companion object {
