@@ -115,7 +115,17 @@ class ForegroundResolverTest {
         assertEquals(YOUTUBE, state?.packageName)
     }
 
+    @Test
+    fun `split-screen container window is ignored`() {
+        // OxygenOS 16 adds a com.oplus.pscanvas application window next to the two halves.
+        val canvas = app(SPLIT_CANVAS)
+        val state = resolve(app(YOUTUBE, top), canvas, app(INSTAGRAM, bottom, focused = true))
+        assertEquals(INSTAGRAM, state?.packageName)
+        assertEquals(listOf(INSTAGRAM, YOUTUBE), state?.visiblePackages)
+    }
+
     private companion object {
+        const val SPLIT_CANVAS = "com.oplus.pscanvas"
         const val SHELF = "com.coloros.assistantscreen"
         const val SYSTEM_UI = "com.android.systemui"
         const val INSTAGRAM = "com.instagram.android"

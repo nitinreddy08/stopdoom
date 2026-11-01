@@ -76,15 +76,15 @@ test passing, and the APK installed and opened on the user's phone.
 - **Step 01, error logging:** caught exceptions log the class name and top stack frame; the
   message only in debug builds (ADR-019, release logs stay structural).
 - **Step 01, panels that are never the foreground app (refines SPEC §7.3 step 3):**
-  `ForegroundResolver.NEVER_FOREGROUND` = `com.android.systemui` and `com.coloros.assistantscreen`
-  (OnePlus/OPPO/realme Shelf). Their windows are ignored even when Android reports them as
+  `ForegroundResolver.NEVER_FOREGROUND` = `com.android.systemui`, `com.coloros.assistantscreen`
+  (OnePlus/OPPO/realme Shelf) and `com.oplus.pscanvas` (OxygenOS split-screen container). Their windows are ignored even when Android reports them as
   application windows; the previous app stays in front. Reason: on the user's OnePlus 11R
   (OxygenOS 16) the Shelf, a panel opened by swiping down on the home screen, is reported as an
   application window and showed up as a foreground "app". (It cannot open over other apps; an
   earlier log line that went straight from Instagram to the Shelf was the home screen passing too
   quickly to register.) More phone-maker panels get added here as device tests find them (a
   candidate for the rules file in Step 05). The diagnostic log now says what it ignored
-  (`kept <app>; focus on <TYPE> <package>`).
+  (`kept <app>; focus on <TYPE> <package>`); moments with no focused window are not logged.
 - **Step 01, fixed debug signing key (user's choice "a", 2026-11-01):** `app/debug.keystore`
   (standard debug alias/passwords) is committed on purpose and `.gitignore` makes an exception for
   it, so each CI build installs as an update. Debug builds only; release signing is Step 13 and
@@ -106,6 +106,9 @@ test passing, and the APK installed and opened on the user's phone.
   GitHub Releases in regions with this protection will hit the same wall; the README and the
   distribution plan (ADR-017: Google Play, F-Droid) must account for it. Never try to evade the
   check in code.
+- **No unlock broadcast on OxygenOS 16:** `ACTION_USER_PRESENT` was never received on the user's
+  OnePlus 11R (screen on/off were). Later steps must not rely on it alone; e.g. treat the first
+  app window event after "screen on" as the unlock.
 - **Heartbeat during deep sleep:** the 60 s heartbeat pauses while the CPU sleeps with the screen
   off; a gap in `lastAliveAt` alone does not mean the service died. Health checks (§14.1) must
   account for this.
@@ -137,5 +140,11 @@ test passing, and the APK installed and opened on the user's phone.
 - **2026-11-01, Step 01 (attempt 2).** OnePlus 11R, Android 16. APK: CI run #16 (fixed debug key,
   panel fix). Passed: Shelf opened from the home screen is ignored (`kept com.android.launcher;
   focus on APPLICATION com.coloros.assistantscreen`); the screenshot tool is ignored too (`focus
-  on OTHER com.oplus.screenshot`); Instagram on/off still correct. Shade inside an app, keyboard,
-  split screen and 5-minute lock: pending.
+  on OTHER com.oplus.screenshot`); Instagram on/off still correct. Notification shade inside
+  Instagram: kept Instagram (`focus on SYSTEM com.android.systemui`), passed. Keyboard (Instagram
+  search): Instagram stayed in front, passed. Split screen (Claude top, Instagram bottom):
+  Instagram detected with half-screen bounds `[0,1491][1240,2771]` and both apps visible; the
+  container `com.oplus.pscanvas` also listed as visible (now ignored); a switch to the Claude
+  half was not seen in the log. Lock: screen off three times (about 5.5 min total, longest
+  about 2 min 46 s), `Connected since` unchanged (no restart); no "unlocked" line. The
+  Emergency SOS app (`com.oplus.sos`) appeared after rapid power presses.

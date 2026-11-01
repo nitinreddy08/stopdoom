@@ -40,8 +40,14 @@ object ForegroundResolver {
      * - `com.android.systemui`: notification shade, quick settings, volume and similar panels.
      * - `com.coloros.assistantscreen`: the OnePlus/OPPO/realme Shelf, a panel opened by swiping
      *   down on the home screen (seen on a OnePlus 11R, OxygenOS 16, 2026-11-01).
+     * - `com.oplus.pscanvas`: the OxygenOS/ColorOS split-screen container, reported as an
+     *   application window next to the two apps (seen on the same phone).
      */
-    val NEVER_FOREGROUND: Set<String> = setOf("com.android.systemui", "com.coloros.assistantscreen")
+    val NEVER_FOREGROUND: Set<String> = setOf(
+        "com.android.systemui",
+        "com.coloros.assistantscreen",
+        "com.oplus.pscanvas",
+    )
 
     /**
      * Picks the foreground app from the current windows (SPEC §7.3 steps 2–3): the focused

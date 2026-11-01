@@ -33,6 +33,9 @@ class ForegroundTracker(
         }
         val focused = snapshots.firstOrNull { it.isFocused }
         val focus = focused?.let { "${it.kind} ${it.packageName ?: "?"}" } ?: "none"
+        // A focused window that is not the current app (shade, Shelf, keyboard...). "No window
+        // focused" is skipped: it happens between every two windows and only adds noise.
+        val ignoredFocus = focused != null && focused.packageName != current?.packageName
         val next = ForegroundResolver.resolve(snapshots, clock())
         if (next != null && ForegroundResolver.isChange(current, next)) {
             current = next
@@ -40,8 +43,7 @@ class ForegroundTracker(
             val message = "foreground ${next.packageName} ${next.appWindowBounds}"
             log.i(TAG, "$message visible=${next.visiblePackages}")
             setContentEvents(next.packageName in trackedPackages)
-        } else if (focus != lastFocus && focused?.packageName != current?.packageName) {
-            // A non-app window (shade, Shelf, keyboard...) has focus: log what was ignored.
+        } else if (ignoredFocus && focus != lastFocus) {
             log.d(TAG, "kept ${current?.packageName ?: "none"}; focus on $focus")
         }
         lastFocus = focus
