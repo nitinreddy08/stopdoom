@@ -3,7 +3,7 @@
 The agent updates this at the end of every session. Newest entries at the top.
 
 ## Current step
-Step 02 (built, CI pending; waiting for the user's recordings). Test phone: OnePlus 11R,
+Step 02 (built, CI green; waiting for the user's recordings). Test phone: OnePlus 11R,
 Android 16. Installed apps among the tracked ones: Instagram and Snapchat only.
 
 ### 2026-11-01: Step 02, Inspector (in progress)
@@ -22,7 +22,7 @@ Built (commit 5c78c3f):
   limiter, signature, SignalMapper, trace privacy, app ids).
 
 Done when:
-- [ ] CI green.
+- [x] CI green (run #26: spotless, lint, 51 `:app` + 12 `:detection` tests, APK).
 - [ ] 🔶 User records and shares the traces (Instagram 1–5, plus Snapchat Spotlight).
 - [ ] Traces committed to `detection/src/test/resources/traces/`.
 
