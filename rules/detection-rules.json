@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "rulesVersion": "2026-11-01.1",
+  "apps": [
+    {
+      "id": "instagram",
+      "displayName": "Instagram",
+      "packages": ["com.instagram.android"],
+      "testedVersionCodes": null,
+      "surfaces": [
+        {
+          "id": "instagram_reels",
+          "viewIdRegex": [],
+          "classNameRegex": [],
+          "minHeightRatio": 0.75,
+          "minWidthRatio": 0.9,
+          "fullItemRatio": 0.9,
+          "requireVertical": true,
+          "settleMs": 300,
+          "entryDwellMs": 1000,
+          "strategy": "AUTO",
+          "deltaThresholdRatio": 0.6
+        }
+      ]
+    },
+    {
+      "id": "youtube",
+      "displayName": "YouTube",
+      "packages": ["com.google.android.youtube"],
+      "testedVersionCodes": null,
+      "surfaces": [
+        {
+          "id": "youtube_shorts",
+          "viewIdRegex": [],
+          "classNameRegex": [],
+          "minHeightRatio": 0.75,
+          "minWidthRatio": 0.9,
+          "fullItemRatio": 0.9,
+          "requireVertical": true,
+          "settleMs": 300,
+          "entryDwellMs": 1000,
+          "strategy": "AUTO",
+          "deltaThresholdRatio": 0.6
+        }
+      ]
+    },
+    {
+      "id": "tiktok",
+      "displayName": "TikTok",
+      "packages": ["com.zhiliaoapp.musically", "com.ss.android.ugc.trill"],
+      "testedVersionCodes": null,
+      "surfaces": [
+        {
+          "id": "tiktok_feed",
+          "viewIdRegex": [],
+          "classNameRegex": [],
+          "minHeightRatio": 0.75,
+          "minWidthRatio": 0.9,
+          "fullItemRatio": 0.9,
+          "requireVertical": true,
+          "settleMs": 300,
+          "entryDwellMs": 1000,
+          "strategy": "AUTO",
+          "deltaThresholdRatio": 0.6
+        }
+      ]
+    },
+    {
+      "id": "facebook",
+      "displayName": "Facebook",
+      "packages": ["com.facebook.katana"],
+      "testedVersionCodes": null,
+      "surfaces": [
+        {
+          "id": "facebook_reels",
+          "viewIdRegex": [],
+          "classNameRegex": [],
+          "minHeightRatio": 0.75,
+          "minWidthRatio": 0.9,
+          "fullItemRatio": 0.9,
+          "requireVertical": true,
+          "settleMs": 300,
+          "entryDwellMs": 1000,
+          "strategy": "AUTO",
+          "deltaThresholdRatio": 0.6
+        }
+      ]
+    },
+    {
+      "id": "snapchat",
+      "displayName": "Snapchat",
+      "packages": ["com.snapchat.android"],
+      "testedVersionCodes": null,
+      "surfaces": [
+        {
+          "id": "snapchat_spotlight",
+          "viewIdRegex": [],
+          "classNameRegex": [],
+          "minHeightRatio": 0.75,
+          "minWidthRatio": 0.9,
+          "fullItemRatio": 0.9,
+          "requireVertical": true,
+          "settleMs": 300,
+          "entryDwellMs": 1000,
+          "strategy": "AUTO",
+          "deltaThresholdRatio": 0.6
+        }
+      ]
+    }
+  ]
+}
