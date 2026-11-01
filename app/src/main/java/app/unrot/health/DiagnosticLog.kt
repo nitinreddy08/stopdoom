@@ -1,12 +1,12 @@
 package app.unrot.health
 
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 
 enum class LogLevel { DEBUG, INFO, WARN, ERROR }
 

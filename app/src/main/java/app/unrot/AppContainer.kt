@@ -10,11 +10,11 @@ import app.unrot.health.LogEntry
 import app.unrot.health.LogLevel
 import app.unrot.rules.TrackedPackages
 import app.unrot.service.ServiceStatus
+import java.io.File
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import java.io.File
 
 /**
  * Manual dependency injection (ADR-011). Everything is created lazily on first use; `by lazy`
