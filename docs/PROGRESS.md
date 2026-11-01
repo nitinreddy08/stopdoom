@@ -3,7 +3,7 @@
 The agent updates this at the end of every session. Newest entries at the top.
 
 ## Current step
-Step 01 (not started). Start it in a fresh session from the latest `main`.
+Step 01 (not started). Test phone: OnePlus 11R, Android 16.
 
 ## Completed steps
 
@@ -61,6 +61,6 @@ test passing, and the APK installed and opened on the user's phone.
 ## Device test results
 (date, step, phone model, Android version, what passed, what failed)
 
-- **2026-11-01, Step 00.** Phone model and Android version: not reported. APK: `app-debug` from
+- **2026-11-01, Step 00.** OnePlus 11R, Android 16. APK: `app-debug` from
   CI run #2. Passed: installed, opened, showed the "Today" placeholder (dark theme, edge-to-edge,
   status bar readable), no crash. Failed: nothing.
